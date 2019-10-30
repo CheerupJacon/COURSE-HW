@@ -1,0 +1,13 @@
+import random
+
+def shuffle(a,b):
+    c = list(zip(a, b))
+    random.shuffle(c)
+    return c
+
+x = ['快递太慢了！','不好吃','特别难吃','要齁死我了','很划算','下次还来','味道很不错！','香']
+y = ['差评','差评','差评','差评','好评','好评','好评','好评']
+results = shuffle(x, y)
+
+for i in results:
+    print(i[0] + ':' + i[1])
