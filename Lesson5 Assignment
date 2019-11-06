@@ -1,0 +1,26 @@
+# 理论部分
+class A2():
+    name = 'A0'
+    num = 2
+    
+class A1:
+    num = 1
+    
+class A3:
+    name = 'A3'
+    
+class A4(A1,A2,A3):
+    pass
+ 
+ins = A4()
+print(A4.__mro__)
+print(ins.name)
+print(ins.num)
+
+print("""
+      解释：
+      目前 Python 中通常使用新式类，而新式类在多重继承的查找使用C3算法，根据C3算法我们能够得到Mmro（Method Resolution Order）。
+      在上述代码中，A4的mro为(<class '__main__.A4'>, <class '__main__.A1'>, <class '__main__.A2'>, <class '__main__.A3'>, <class 'object'>)
+      也就是说，上述mro中类出现的顺序是多重继承的查找顺序
+      按照这个顺序分别查找 ins.name 和 ins.num，可以分别得到 A0 和 1
+""")
