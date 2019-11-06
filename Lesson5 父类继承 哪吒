@@ -1,0 +1,24 @@
+class Lijing: # 李靖
+    # 初始化函数，为每个实例创建4个参数（其中后3个参数有默认值）
+    def __init__(self, name, weapons=[], power=10): 
+        self.name = name
+        self.weapons = weapons
+        self.power = power
+
+    def count_fight(self, weapon, weapon_power):
+        self.weapons.append(weapon)
+        self.power += weapon_power  # 总战力=武器战力之和
+
+class Nezhazha(Lijing): # 创建一个子类哪吒类
+    def __init__(self, weapons1 = ['混天绫', '乾坤圈'], power1=50, weapons_power = [30, 30]):
+        self.name = Lijing('哪吒', weapons = weapons1, power=power1).name
+        self.weapons = Lijing('哪吒', weapons = weapons1, power=power1).weapons
+        self.init_power = Lijing('哪吒', weapons = weapons1, power=power1).power
+        self.power = self.init_power
+        for i in weapons_power:
+            self.power += i
+
+Nezha = Nezhazha()
+print(
+    '新英雄的名字是：{}，他的初始战斗力为：{}，他的武器有：{}，经过武器加持后战斗力为：{}'.format(Nezha.name, Nezha.init_power, Nezha.weapons, Nezha.power)
+)
