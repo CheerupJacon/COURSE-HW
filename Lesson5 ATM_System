@@ -1,0 +1,52 @@
+class ATM_System:
+    current_money = int(input('请输入现有的存款金额'))
+    
+    def __init__(self):
+        # 给出菜单
+        info = """
+        ===========
+        请选择操作
+        1. 查询余额
+        2. 存款
+        3. 取款
+        4. 退出
+        ===========
+
+        """
+        while True:
+                print(info)
+                num = int(input('请输入相关操作对应的数字'))
+                if num == 1:
+                    self.show_money()
+                elif num == 2:
+                    self.deposit_money()
+                elif num == 3:
+                    self.withdraw_money()
+                elif num == 4:
+                    print('您已退出操作系统！')
+                    break
+                else:
+                    print('请输入正确的整数数字！')
+    
+    def show_money(self):
+        # 查询余额
+        print('您目前的存款余额为：{}'.format(self.current_money))
+    
+    def deposit_money(self):
+        # 存款操作
+        money_deposit = float(input('请输入您的存款金额：'))
+        self.current_money = self.current_money + money_deposit
+        print('您已存款成功！您目前的存款余额为：{}'.format(self.current_money))
+        
+    def withdraw_money(self):
+        # 取款操作
+        money_withdraw = float(input('请输入您的取款金额：'))
+        self.current_money = self.current_money - money_withdraw
+        if self.current_money < 0:
+            self.current_money = self.current_money + money_withdraw
+            print('很抱歉，您目前的存款金额不足，无法取款！')
+        else:
+            print('您已成功取款！您目前的存款余额为：{}'.format(self.current_money))
+    
+a = ATM_System()
+a.current_money
