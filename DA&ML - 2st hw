@@ -1,0 +1,92 @@
+import pandas as pd
+df = pd.read_csv('fundamentals.csv')
+df.head()
+
+# Question 1
+df1 = df[df['For Year'] == 2015.0 ]
+"""
+还可以使用 Query进行新的df创建
+df1 = df.query('For Year == 2015.0')
+"""
+avg = df1['Net Income'].mean()
+diff = df1['Net Income'].max() - df1['Net Income'].min()
+print('2015年的纯利润平均值为{:}、纯利润的最大差值为{:}'.format(avg, diff))
+
+df2 = df[df['For Year'] == 2016.0 ]
+df2['Ratio'] = df2['Fixed Assets']/df2['Total Assets']
+avg1 = df2['Ratio'].sum()/df2.shape[0]
+print('2016年的固定资产占总资产比例的均值是{:}'.format(avg1))
+
+SortedNum = df2.sort_values(['Ratio'])
+print('固定资产占总资产比例最小的股票是的代码（ticker symbol）是', SortedNum.iloc[0,1])
+"""
+做法2：df2.groupby(['Ratio'])['Ticker Symbol'].min().iloc[0]
+"""
+
+securities = pd.read_csv('securities.csv')
+
+# Question 2
+securities['Date first added'] = securities['Date first added'].fillna('null')
+IndexOfNull = securities[securities['Date first added'] == 'null'].index.tolist() # 空值所在的行的 index
+se = securities.drop(IndexOfNull)
+se['Date first added'] = pd.to_datetime(se['Date first added'])
+se = se.sort_values(['Date first added'])
+
+# Subquestion 1
+se = se.set_index(keys = ['GICS Sector']) # 设置 index 的名称
+se = se.drop(se.columns[[1, 2, 3, 6]], axis = 1) # 删除列，注意，DF.columns[[]]，删除多个列应嵌套两个 [[数字]]
+l = se.index.unique().tolist()
+for i in l:
+    se1 = se[se.index == i]
+    print(i, '加入时间最早的股票名称', se1.iloc[0, 0]) # 找第一列输入 0
+
+# Subquention 2
+se_ = se.set_index(keys = ['Address of Headquarters'])
+l_ = se_.index.unique().tolist()
+for i in l_:
+    se1 = se_[se_.index == i]
+    print(i, '加入时间最晚的股票名称', se1.iloc[-1, 0]) # 找最后列输入 -1
+    """
+    se1.iloc[len(se1) - 1, 0]
+    注意，len() 是从 1 开始计数的
+    range() 是从 0 开始计数的
+    """
+
+# Question 3
+securities = securities.rename(columns = {'Ticker symbol': 'Ticker Symbol'})
+new_df = pd.merge(df, securities, how = 'inner', on = 'Ticker Symbol')
+new_df.head(5)
+
+df1 = df[df['For Year'] == 2015.0 ]
+new_df1 = new_df[(new_df['For Year'] == 2013.0)|(new_df['For Year'] == 2014.0) | (new_df['For Year'] == 2015.0) | (new_df['For Year'] == 2016.0)]
+"""
+这里有个问题：
+1、根据王圣博同学的优秀作业我发现可以使用query进行取样，为什么我写成 new_df[(new_df['For Year'] > 2012) and (new_df['For Year'] < 2017)]
+不行呢？
+2、& 和 and ，| 和 or 有什么区别呢？我上面的代码，把 | 换成 or 却无法执行...
+"""
+print('每个sector在2013-2016年累计Research&Development的总投入：')
+new_df1['Research and Development'].groupby(new_df1['GICS Sector']).sum()
+
+new_df2 = pd.DataFrame(new_df, columns = ['GICS Sector', 'Security', 'For Year', 'Research and Development'])
+List = new_df2['GICS Sector'].unique().tolist()
+Company = new_df2['Security'].unique().tolist()
+Gross = {} # keys = company, values = total investment
+for i in range(len(List)):
+    a = new_df2[new_df2['GICS Sector'] == List[i]]
+    for IdX in range(len(a.index)):
+        Com = a.iloc[IdX, 1]
+        if Com not in Gross.keys():
+            Gross[Com] = a.iloc[IdX, 3]
+        else:
+            Gross[Com] = Gross[Com] + a.iloc[IdX, 3]
+    Gross_ = sorted(Gross.items(),key = lambda x:x[1], reverse = True)
+    for top in range(3):
+        print('Sector: ', List[i], '; Company Name: ', Gross_[top][0], '; Gross Investment: ', Gross_[top][1])
+    
+    """
+    虽然我不知道我是哪一步错了...
+    但我就是错了...
+    orz
+    请老师帮我看一下，感谢！
+    """
